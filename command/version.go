@@ -7,13 +7,12 @@ import (
 )
 
 var Version string
-var Commit string
 
 func NewVersionCommand() *cobra.Command {
 	c := cobra.Command{
 		Use: "version",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Printf("v.%s %s\n", Version, Commit)
+			fmt.Printf("v.%s\n", Version)
 			return nil
 		},
 	}

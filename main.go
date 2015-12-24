@@ -5,12 +5,10 @@ import (
 	"github.com/rauwekost/silo/command"
 )
 
-var version = "1.0"
-var commit = "abc"
+var version string
 
 func main() {
 	command.Version = version
-	command.Commit = commit
 	rootCmd := command.NewRootCommand()
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
