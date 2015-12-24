@@ -26,6 +26,9 @@ _testmain.go
 #Temp builds
 silo
 
+#database
+fixtures/database/*
+
 #Gin
 gin-bin
 
