@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"fmt"
 	"image"
 
 	"github.com/disintegration/imaging"
@@ -19,7 +18,6 @@ func (e ImageEngine) Resize(img image.Image, w, h int, fit bool) (image.Image, e
 
 func (e ImageEngine) Transform(img image.Image, o *ImageOptions) (image.Image, error) {
 	var dst image.Image
-	fmt.Printf("%+v\n", o)
 	if o.Fit && o.Width > 0 && o.Height > 0 {
 		dst = imaging.Fit(img, o.Width, o.Height, defaultResampling)
 	} else if o.Fill && o.Width > 0 && o.Height > 0 {

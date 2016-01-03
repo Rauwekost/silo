@@ -3,10 +3,10 @@ package http
 import (
 	"crypto/hmac"
 	"crypto/sha1"
+	"fmt"
 	"hash"
 	"net/http"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/bmizerany/pat"
 	"github.com/boltdb/bolt"
 	"github.com/jacobstr/confer"
@@ -28,6 +28,7 @@ type Server struct {
 	StorageService *service.Storage
 	Config         *confer.Config
 	Signer         *gosigner.Signer
+	DB             *bolt.DB
 }
 
 func NewServer(c *confer.Config) (*Server, error) {
@@ -49,17 +50,22 @@ func NewServer(c *confer.Config) (*Server, error) {
 		return nil, err
 	}
 
-	//create signer
-	logrus.Infof("Secret: %s", c.GetString("silo.signing.secret"))
-	signer := gosigner.New(hmac.New(func() hash.Hash {
-		return sha1.New()
-	}, []byte(c.GetString("silo.signing.secret"))), gosigner.Options{})
-
-	return &Server{
+	//server
+	server := &Server{
 		StorageService: srv,
 		Config:         c,
-		Signer:         signer,
-	}, nil
+		DB:             b,
+	}
+
+	//create signer
+	signer := gosigner.New(hmac.New(func() hash.Hash {
+		return sha1.New()
+	}, []byte(c.GetString("silo.signing.secret"))), gosigner.Options{
+		CheckNonceFunc: server.CheckNonceFunc,
+	})
+	server.Signer = signer
+
+	return server, nil
 }
 
 func (s *Server) HTTPHandler() http.Handler {
@@ -74,4 +80,22 @@ func (s *Server) HTTPHandler() http.Handler {
 	mux.Add("POST", httpPathUpload, secChain.Then(HttpHandler(s.uploadHandler)))
 
 	return mux
+}
+
+//function for the signer to check nonces and store them so a nonce can't be
+//used twice, @TODO: clean the database once in a while
+func (s *Server) CheckNonceFunc(n string) error {
+	//create the database
+	err := s.DB.Update(func(tx *bolt.Tx) error {
+		b, err := tx.CreateBucketIfNotExists([]byte("nonces"))
+		if err != nil {
+			return fmt.Errorf("create bucket: %s", err)
+		}
+		nonce := b.Get([]byte(n))
+		if nonce != nil {
+			return fmt.Errorf("Nonce %s already exists", n)
+		}
+		return b.Put([]byte(n), []byte("1"))
+	})
+	return err
 }
