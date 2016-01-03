@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/boltdb/bolt"
-	tm "github.com/buger/goterm"
-	"github.com/spf13/cobra"
+	"github.com/rauwekost/silo/Godeps/_workspace/src/github.com/boltdb/bolt"
+	tm "github.com/rauwekost/silo/Godeps/_workspace/src/github.com/buger/goterm"
+	"github.com/rauwekost/silo/Godeps/_workspace/src/github.com/spf13/cobra"
 )
 
 func NewStatsCommand() *cobra.Command {

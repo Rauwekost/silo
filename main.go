@@ -1,7 +1,7 @@
 package main
 
 import (
-	log "github.com/Sirupsen/logrus"
+	log "github.com/rauwekost/silo/Godeps/_workspace/src/github.com/Sirupsen/logrus"
 	"github.com/rauwekost/silo/command"
 )
 

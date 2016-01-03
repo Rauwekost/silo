@@ -6,7 +6,7 @@ import (
 	"mime/multipart"
 	"net/http"
 
-	"github.com/mholt/binding"
+	"github.com/rauwekost/silo/Godeps/_workspace/src/github.com/mholt/binding"
 	"github.com/rauwekost/silo/metadata"
 	"github.com/rauwekost/silo/service"
 	"github.com/rauwekost/silo/storage"

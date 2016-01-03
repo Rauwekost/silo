@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/boltdb/bolt"
+	"github.com/rauwekost/silo/Godeps/_workspace/src/github.com/boltdb/bolt"
 )
 
 // ErrNotFound indicates object is not in database.

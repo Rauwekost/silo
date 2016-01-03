@@ -3,7 +3,7 @@ package command
 import (
 	"fmt"
 
-	"github.com/spf13/cobra"
+	"github.com/rauwekost/silo/Godeps/_workspace/src/github.com/spf13/cobra"
 )
 
 var Version string

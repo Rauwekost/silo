@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/rauwekost/silo/Godeps/_workspace/src/github.com/Sirupsen/logrus"
 )
 
 //routeLogger logs the route and request time

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"crypto"
 
-	"github.com/rauwekost/go-checksum"
+	"github.com/rauwekost/silo/Godeps/_workspace/src/github.com/rauwekost/go-checksum"
 )
 
 type File interface {

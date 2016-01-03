@@ -3,7 +3,7 @@ package engine
 import (
 	"image"
 
-	"github.com/disintegration/imaging"
+	"github.com/rauwekost/silo/Godeps/_workspace/src/github.com/disintegration/imaging"
 )
 
 type ImageEngine struct {

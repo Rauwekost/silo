@@ -3,11 +3,11 @@ package command
 import (
 	"net/http"
 
-	log "github.com/Sirupsen/logrus"
-	"github.com/jacobstr/confer"
+	log "github.com/rauwekost/silo/Godeps/_workspace/src/github.com/Sirupsen/logrus"
+	"github.com/rauwekost/silo/Godeps/_workspace/src/github.com/jacobstr/confer"
+	"github.com/rauwekost/silo/Godeps/_workspace/src/github.com/spf13/cobra"
+	"github.com/rauwekost/silo/Godeps/_workspace/src/github.com/spf13/pflag"
 	web "github.com/rauwekost/silo/http"
-	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 )
 
 func NewServerCommand() *cobra.Command {

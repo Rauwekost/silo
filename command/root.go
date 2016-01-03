@@ -1,8 +1,8 @@
 package command
 
 import (
-	log "github.com/Sirupsen/logrus"
-	"github.com/spf13/cobra"
+	log "github.com/rauwekost/silo/Godeps/_workspace/src/github.com/Sirupsen/logrus"
+	"github.com/rauwekost/silo/Godeps/_workspace/src/github.com/spf13/cobra"
 )
 
 func NewRootCommand() *cobra.Command {
