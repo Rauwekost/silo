@@ -1,12 +1,17 @@
 package http
 
 import (
+	"crypto/hmac"
+	"crypto/sha1"
+	"hash"
 	"net/http"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/bmizerany/pat"
 	"github.com/boltdb/bolt"
 	"github.com/jacobstr/confer"
 	"github.com/justinas/alice"
+	"github.com/rauwekost/gosigner"
 	"github.com/rauwekost/silo/service"
 	"github.com/rauwekost/silo/storage"
 	"github.com/rauwekost/silo/store"
@@ -14,14 +19,15 @@ import (
 
 var (
 	httpPathHealth   = "/health"
-	httpPathDisplay  = "/display/:sum"
-	httpPathDownload = "/download/:sum"
+	httpPathDisplay  = "/display"
+	httpPathDownload = "/download"
 	httpPathUpload   = "/upload"
 )
 
 type Server struct {
 	StorageService *service.Storage
 	Config         *confer.Config
+	Signer         *gosigner.Signer
 }
 
 func NewServer(c *confer.Config) (*Server, error) {
@@ -43,21 +49,29 @@ func NewServer(c *confer.Config) (*Server, error) {
 		return nil, err
 	}
 
+	//create signer
+	logrus.Infof("Secret: %s", c.GetString("silo.signing.secret"))
+	signer := gosigner.New(hmac.New(func() hash.Hash {
+		return sha1.New()
+	}, []byte(c.GetString("silo.signing.secret"))), gosigner.Options{})
+
 	return &Server{
 		StorageService: srv,
 		Config:         c,
+		Signer:         signer,
 	}, nil
 }
 
 func (s *Server) HTTPHandler() http.Handler {
 	mux := pat.New()
 	chain := alice.New(routeLogger)
+	secChain := alice.New(routeLogger, gosigner.NewMidddleware(s.Signer, nil).Handler)
 
 	//routing
 	mux.Add("GET", httpPathHealth, chain.Then(HttpHandler(s.healthHandler)))
-	mux.Add("GET", httpPathDisplay, chain.Then(HttpHandler(s.displayHandler)))
-	mux.Add("GET", httpPathDownload, chain.Then(HttpHandler(s.downloadHandler)))
-	mux.Add("POST", httpPathUpload, chain.Then(HttpHandler(s.uploadHandler)))
+	mux.Add("GET", httpPathDisplay, secChain.Then(HttpHandler(s.displayHandler)))
+	mux.Add("GET", httpPathDownload, secChain.Then(HttpHandler(s.downloadHandler)))
+	mux.Add("POST", httpPathUpload, secChain.Then(HttpHandler(s.uploadHandler)))
 
 	return mux
 }

@@ -5,3 +5,5 @@ silo:
         location: /tmp/silo
     database:
         location: ./fixtures/database/silo.db
+    signing:
+        secret: secret

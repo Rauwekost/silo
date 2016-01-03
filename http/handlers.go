@@ -36,13 +36,16 @@ func (s *Server) uploadHandler(w http.ResponseWriter, r *http.Request) *Error {
 }
 
 func (s *Server) displayHandler(w http.ResponseWriter, r *http.Request) *Error {
-	sum := r.URL.Query().Get(":sum")
+	id := r.URL.Query().Get("id")
+	if id == "" {
+		return ErrInvalidRequest("no id provided")
+	}
 	options, err := s.ImageOptionsFromRequest(r)
 	if err != nil {
 		return ErrInvalidRequest(err.Error())
 	}
 
-	img, err := s.StorageService.Display(sum, options)
+	img, err := s.StorageService.Display(id, options)
 	if err != nil {
 		return ErrInvalidRequest(err.Error())
 	}
@@ -52,8 +55,11 @@ func (s *Server) displayHandler(w http.ResponseWriter, r *http.Request) *Error {
 }
 
 func (s *Server) downloadHandler(w http.ResponseWriter, r *http.Request) *Error {
-	sum := r.URL.Query().Get(":sum")
-	f, m, err := s.StorageService.Find(sum)
+	id := r.URL.Query().Get("id")
+	if id == "" {
+		return ErrInvalidRequest("no id provided")
+	}
+	f, m, err := s.StorageService.Find(id)
 	if err != nil {
 		return ErrNotFound(err.Error())
 	}
