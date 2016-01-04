@@ -19,6 +19,5 @@ func NewRootCommand() *cobra.Command {
 	c.PersistentFlags().BoolP("verbose", "v", false, "More verbose output")
 	c.AddCommand(NewVersionCommand())
 	c.AddCommand(NewServerCommand())
-	c.AddCommand(NewStatsCommand())
 	return &c
 }

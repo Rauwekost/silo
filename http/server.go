@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"hash"
 	"net/http"
+	"time"
 
 	"github.com/rauwekost/silo/Godeps/_workspace/src/github.com/bmizerany/pat"
 	"github.com/rauwekost/silo/Godeps/_workspace/src/github.com/boltdb/bolt"
@@ -19,6 +20,7 @@ import (
 
 var (
 	httpPathHealth   = "/health"
+	httpPathStats    = "/stats"
 	httpPathDisplay  = "/display"
 	httpPathDownload = "/download"
 	httpPathUpload   = "/upload"
@@ -29,6 +31,8 @@ type Server struct {
 	Config         *confer.Config
 	Signer         *gosigner.Signer
 	DB             *bolt.DB
+	prevStats      bolt.Stats
+	Stats          bolt.Stats
 }
 
 func NewServer(c *confer.Config) (*Server, error) {
@@ -65,6 +69,8 @@ func NewServer(c *confer.Config) (*Server, error) {
 	})
 	server.Signer = signer
 
+	go server.MeasureStats()
+
 	return server, nil
 }
 
@@ -75,6 +81,7 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	//routing
 	mux.Add("GET", httpPathHealth, chain.Then(HttpHandler(s.healthHandler)))
+	mux.Add("GET", httpPathStats, chain.Then(HttpHandler(s.statsHandler)))
 	mux.Add("GET", httpPathDisplay, secChain.Then(HttpHandler(s.displayHandler)))
 	mux.Add("GET", httpPathDownload, secChain.Then(HttpHandler(s.downloadHandler)))
 	mux.Add("POST", httpPathUpload, secChain.Then(HttpHandler(s.uploadHandler)))
@@ -98,4 +105,16 @@ func (s *Server) CheckNonceFunc(n string) error {
 		return b.Put([]byte(n), []byte("1"))
 	})
 	return err
+}
+
+func (s *Server) MeasureStats() {
+	for {
+		time.Sleep(10 * time.Second)
+
+		stats := s.DB.Stats()
+		s.Stats = stats.Sub(&s.prevStats)
+
+		// Save stats for the next loop.
+		s.prevStats = stats
+	}
 }

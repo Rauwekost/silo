@@ -5,12 +5,20 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/rauwekost/silo/Godeps/_workspace/src/github.com/boltdb/bolt"
 	"github.com/rauwekost/silo/Godeps/_workspace/src/github.com/mholt/binding"
 	"github.com/rauwekost/silo/engine"
 )
 
+var previousStats bolt.Stats
+
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) *Error {
 	JSON(w, 200, map[string]interface{}{"status": "ok"})
+	return nil
+}
+
+func (s *Server) statsHandler(w http.ResponseWriter, r *http.Request) *Error {
+	JSON(w, 200, s.Stats)
 	return nil
 }
 
