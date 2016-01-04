@@ -87,7 +87,6 @@ func (s *Storage) Display(sha string, opt *engine.ImageOptions) (image.Image, er
 	}
 
 	//check if the image can be found in cache
-	log.Infof("cache-path: %s", s.PathForCached(sha, opt))
 	cached, err := s.fs.Open(s.PathForCached(sha, opt))
 	if err == nil {
 		log.Debug("found cached version")
