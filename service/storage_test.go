@@ -26,7 +26,7 @@ func TestPathForCached(t *testing.T) {
 	}
 
 	cachedUrl := srv.PathForCached(sha, &opt)
-	expect := "S/H/A/SHAb0.00c0.00fltruefttrueg0.00h0s0.00w100"
+	expect := "S/H/A/SHA-bl0.0-br0.0-co0.0-fl1-ft1-ga0.0-he0-sh0.0-wi100"
 	if cachedUrl != expect {
 		t.Fatalf("cachedUrl invalid expected: %s got: %s", expect, cachedUrl)
 	}
